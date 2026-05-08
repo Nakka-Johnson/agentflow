@@ -1,0 +1,66 @@
+# ===== OS =====
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# ===== IDE =====
+.idea/
+.vscode/
+*.iml
+*.iws
+*.ipr
+.project
+.classpath
+.settings/
+.factorypath
+
+# ===== Java / Maven =====
+target/
+*.class
+*.jar
+*.war
+*.ear
+*.log
+hs_err_pid*
+
+# ===== Spring Boot =====
+*.original
+application-local.yml
+application-local.properties
+
+# ===== Python =====
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+venv/
+env/
+ENV/
+.venv/
+*.egg-info/
+.pytest_cache/
+.mypy_cache/
+
+# ===== Secrets & Credentials =====
+.env
+.env.local
+.env.*.local
+*.pem
+*.key
+aws-credentials.csv
+credentials.json
+
+# ===== Local data / artifacts =====
+ingestion/corpus/
+retrieval-service/faiss_index/
+*.bin
+*.pkl
+*.npy
+
+# ===== Docker =====
+.docker/
+
+# ===== Logs =====
+logs/
+*.log.*
