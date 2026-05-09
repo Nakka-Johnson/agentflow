@@ -1,23 +1,73 @@
-# Local backups
-app-backup-*.zip
-*.bak
+# ===== OS =====
+.DS_Store
+Thumbs.db
+desktop.ini
 
-# Java / Maven
+# ===== IDE =====
+.idea/
+.vscode/
+*.iml
+*.iws
+*.ipr
+.project
+.classpath
+.settings/
+.factorypath
+*.swp
+
+# ===== Java / Maven =====
 target/
 *.class
 *.jar
 *.war
 *.ear
 *.log
+hs_err_pid*
 
-# Python
+# ===== Spring Boot =====
+*.original
+application-local.yml
+application-local.properties
+
+# ===== Python =====
 __pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
 venv/
-.env
-retrieval-service/faiss_index/
-ingestion/corpus/
+env/
+ENV/
+.venv/
+*.egg-info/
+.pytest_cache/
+.mypy_cache/
 
-# IDEs
-.vscode/
-.idea/
-*.swp
+# ===== Secrets & Credentials =====
+.env
+.env.local
+.env.*.local
+*.pem
+*.key
+aws-credentials.csv
+credentials.json
+
+# ===== Local data / artifacts =====
+ingestion/corpus/
+ingestion/chunks.jsonl
+retrieval-service/faiss_index.bin
+retrieval-service/chunk_metadata.json
+*.bin
+*.pkl
+*.npy
+
+# ===== Local backups =====
+app-backup-*.zip
+*.bak
+
+# ===== Docker =====
+.docker/
+
+# ===== Logs =====
+logs/
+*.log.*
