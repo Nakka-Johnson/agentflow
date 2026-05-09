@@ -80,3 +80,7 @@ Order roughly reflects priority.
 3. Migration of FAISS sidecar to a real managed vector store (OpenSearch with k-NN is the most likely target since it's also AWS-native).
 4. Per-tool latency dashboards and Bedrock cost metrics in CloudWatch.
 5. Prompt injection test suite.
+
+## Build log
+
+- Friday: Project scaffolding, API contract, Spring Boot health endpoint, validation working.

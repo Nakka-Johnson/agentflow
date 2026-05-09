@@ -1,66 +1,23 @@
-# ===== OS =====
-.DS_Store
-Thumbs.db
-desktop.ini
+# Local backups
+app-backup-*.zip
+*.bak
 
-# ===== IDE =====
-.idea/
-.vscode/
-*.iml
-*.iws
-*.ipr
-.project
-.classpath
-.settings/
-.factorypath
-
-# ===== Java / Maven =====
+# Java / Maven
 target/
 *.class
 *.jar
 *.war
 *.ear
 *.log
-hs_err_pid*
 
-# ===== Spring Boot =====
-*.original
-application-local.yml
-application-local.properties
-
-# ===== Python =====
+# Python
 __pycache__/
-*.py[cod]
-*$py.class
-*.so
-.Python
 venv/
-env/
-ENV/
-.venv/
-*.egg-info/
-.pytest_cache/
-.mypy_cache/
-
-# ===== Secrets & Credentials =====
 .env
-.env.local
-.env.*.local
-*.pem
-*.key
-aws-credentials.csv
-credentials.json
-
-# ===== Local data / artifacts =====
-ingestion/corpus/
 retrieval-service/faiss_index/
-*.bin
-*.pkl
-*.npy
+ingestion/corpus/
 
-# ===== Docker =====
-.docker/
-
-# ===== Logs =====
-logs/
-*.log.*
+# IDEs
+.vscode/
+.idea/
+*.swp
