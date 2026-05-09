@@ -1,53 +1,33 @@
 """
-Scrapes the Spring Boot reference documentation single-page HTML
-and saves it as plain text to corpus/spring-boot-reference.txt.
+Fetches the Anthropic Claude documentation corpus.
+
+Anthropic publishes a flattened, plain-text version of their entire
+documentation site at /llms-full.txt, designed for use as LLM context
+or as a corpus for retrieval systems. We use this directly rather than
+scraping the HTML site (which is a React app and requires rendering).
 """
 
 from pathlib import Path
 import requests
-from bs4 import BeautifulSoup
 
-SPRING_BOOT_REFERENCE_URL = (
-    "https://docs.spring.io/spring-boot/docs/current/reference/htmlsingle/"
-)
+CLAUDE_DOCS_URL = "https://docs.claude.com/llms-full.txt"
 
 CORPUS_DIR = Path(__file__).parent / "corpus"
-OUTPUT_FILE = CORPUS_DIR / "spring-boot-reference.txt"
+OUTPUT_FILE = CORPUS_DIR / "claude-docs.txt"
 
 
 def scrape() -> None:
     CORPUS_DIR.mkdir(exist_ok=True)
 
-    print(f"Fetching {SPRING_BOOT_REFERENCE_URL}...")
-    response = requests.get(SPRING_BOOT_REFERENCE_URL, timeout=60)
+    print(f"Fetching {CLAUDE_DOCS_URL}...")
+    response = requests.get(CLAUDE_DOCS_URL, timeout=60)
     response.raise_for_status()
 
-    print(f"Got {len(response.content):,} bytes. Parsing...")
-    soup = BeautifulSoup(response.content, "lxml")
+    text = response.text
+    print(f"Got {len(text):,} characters")
 
-    # Remove navigation, scripts, styles - we want body content only
-    for tag in soup(["script", "style", "nav", "header", "footer"]):
-        tag.decompose()
-
-    # Extract text, preserving section structure via newlines around headings
-    lines = []
-    for element in soup.find_all(
-        ["h1", "h2", "h3", "h4", "h5", "p", "li", "pre", "code"]
-    ):
-        text = element.get_text(separator=" ", strip=True)
-        if not text:
-            continue
-        # Add markdown-ish heading markers so chunking can detect section boundaries
-        if element.name.startswith("h"):
-            level = int(element.name[1])
-            lines.append("\n" + "#" * level + " " + text + "\n")
-        else:
-            lines.append(text)
-
-    full_text = "\n".join(lines)
-
-    OUTPUT_FILE.write_text(full_text, encoding="utf-8")
-    print(f"Wrote {len(full_text):,} characters to {OUTPUT_FILE}")
+    OUTPUT_FILE.write_text(text, encoding="utf-8")
+    print(f"Wrote corpus to {OUTPUT_FILE}")
 
 
 if __name__ == "__main__":
