@@ -1,17 +1,30 @@
 # AgentFlow
 
-An agentic developer-productivity service that retrieves engineering documentation and generates code review suggestions using LLM tool-calling.
+AgentFlow is a Java 21 and Spring Boot 3.5 agentic developer-assistance service. It exposes a single HTTP API that accepts a developer query, selects a tool, retrieves grounded context when needed, and returns a structured response. The project is intentionally designed to stay small at the orchestration layer while still showing a realistic multi-service architecture: Spring Boot backend, Python retrieval sidecar, AWS Bedrock generation, and pluggable tools.
 
-Built as a portfolio project to explore how agentic workflows can be designed in Java without overengineering — small state machine, pluggable tools, retrieval grounded in real engineering corpora.
+## Technical Overview
 
-## What it does
+The main API is `POST /agent/run`, implemented in the Spring controller layer. Requests carry a `query` and optional `conversationId`, and responses include the generated answer, the conversation ID, tool call summaries, and end-to-end latency. This makes the service easy to integrate while still exposing enough trace data to understand how an answer was produced.
 
-AgentFlow exposes a single `/agent/run` endpoint that accepts a developer query and returns a grounded response. Internally, an orchestrator decides which tools to invoke:
+The runtime is organized around a small agent flow:
 
-- **DocSearch** — semantic search over Spring Boot reference and AWS SDK for Java documentation, backed by a FAISS vector index.
-- **CodeReviewAssist** — given a diff, retrieves relevant style guidelines via DocSearch and generates structured review comments.
+1. The request reaches the API layer.
+2. The agent service chooses an execution mode.
+3. The orchestrator or Bedrock-backed path handles planning and generation.
+4. Tools are invoked when retrieval or code-review grounding is needed.
+5. The final response is returned with latency and tool metadata.
 
-The agent runs on AWS Bedrock (Claude Haiku for generation, Titan v2 for embeddings), with Redis for conversation memory and a Python sidecar service hosting the FAISS index.
+Two agent modes are already present in the codebase:
+
+- **Stub / local mode** uses a small enum-based orchestrator with keyword-based planning.
+- **Bedrock mode** uses AWS Bedrock for direct generation through the AWS SDK.
+
+The tool layer is pluggable through a registry. The current tools are:
+
+- **DocSearch** - semantic retrieval over engineering documentation using a Python FAISS sidecar.
+- **CodeReviewAssist** - retrieves review guidance via DocSearch and produces structured review feedback.
+
+The retrieval sidecar is a separate FastAPI service that loads a FAISS index and metadata at startup, computes embeddings with SentenceTransformers, and exposes `POST /search` for top-K similarity search. The Java service calls it over HTTP, which keeps retrieval isolated and easy to swap later.
 
 ## Architecture
 
@@ -19,16 +32,16 @@ See [ARCHITECTURE.md](./ARCHITECTURE.md) for design decisions, trade-offs, and w
 
 ## Stack
 
-Java 21, Spring Boot 3, AWS Bedrock, FAISS (Python sidecar), Redis, Docker Compose, JUnit 5, Testcontainers.
+Java 21, Spring Boot 3.5, AWS Bedrock, FastAPI, FAISS, SentenceTransformers, Maven, JUnit 5, and Spring Boot test support.
 
 ## Status
 
-Work in progress. See the bottom of `ARCHITECTURE.md` for the roadmap.
+The core wiring is in place: API, orchestrator, tool registry, retrieval sidecar, and Bedrock client. The current planner is still heuristic, the code-review tool is still partially stubbed, and the longer-term roadmap is to replace the naive planner with model-driven tool selection, add evaluation harnesses, and expand production hardening.
 
 ## Running locally
 
-> Setup instructions added as the components come online. See `ARCHITECTURE.md` for the current build order.
+See [ARCHITECTURE.md](./ARCHITECTURE.md) for the current build order and the intended local setup shape.
 
 ## Author
 
-Nakka Johnson · [LinkedIn](https://linkedin.com/in/nakka-johnson) · [GitHub](https://github.com/Nakka-Johnson)# agentflow
+Nakka Johnson · [LinkedIn](https://linkedin.com/in/nakka-johnson) · [GitHub](https://github.com/Nakka-Johnson)
